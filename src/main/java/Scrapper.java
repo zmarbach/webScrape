@@ -13,7 +13,7 @@ public class Scrapper {
     public void getAllATags(String url, List<String> urlList) throws IOException {
 
         //only connect if haven't already visited link
-        if (!urlList.contains(url)) {
+//        if (!urlList.contains(url)) {
 
             //connect to url and get all A tags
             Connection connection = Jsoup.connect(url);
@@ -47,7 +47,7 @@ public class Scrapper {
                     }
                 }
             }
-        }
+//        }
         System.out.println("Num of Unique Links: " + urlList.size());
     }
 }
