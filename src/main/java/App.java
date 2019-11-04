@@ -1,17 +1,18 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class App {
 
     public static void main(String[] args) throws IOException {
         Scrapper scrapper = new Scrapper();
-        var urlList = new ArrayList<String>();
+//        var urlList = new ArrayList<String>();
 
-        var start = System.nanoTime();
-        scrapper.getAllATags("https://improving.com", urlList);
+        var start = new Date();
+        scrapper.getAllATags("https://improving.com");
 
-        System.out.println("Duration: " + (System.nanoTime() - start) / 100000000 + "s");
+        System.out.println("Duration: " + (new Date().getTime() - start.getTime()) / 1000 + "s");
 
     }
 

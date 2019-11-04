@@ -1,4 +1,3 @@
-import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
@@ -7,48 +6,48 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Scrapper {
-    public void getAllATags(String url, List<String> urlList) throws IOException {
+    private List<String> urlList = new ArrayList<>();
+    private int fourHundredFourCount = 0;
 
-        //only connect if haven't already visited link
-//        if (!urlList.contains(url)) {
+    public void getAllATags(String url) throws IOException {
+        //connect to url and get all A tags
+        Document doc = Jsoup.connect(url).get();
+        Elements allATags = doc.select("a");
 
-            //connect to url and get all A tags
-            Connection connection = Jsoup.connect(url);
-            Document doc = connection.get();
-            Elements allATags = doc.select("a");
+        for (Element aTag : allATags) {
+            //For each tag on page, get url
+            String fullUrl = aTag.absUrl("href");
 
-
-            for (Element aTag : allATags) {
-                //For each tag on page, get url
-                System.out.println(aTag.attr("href"));
-                String linkValue = aTag.attr("href");
-
-                //only improving urls W/O "#" that are NOT in the list already
-                if (linkValue.startsWith("/") && !linkValue.contains("#") && !urlList.contains(linkValue)) {
-                    try {
-                        urlList.add(linkValue);
-                        System.out.println("unique link found: " + linkValue);
-                        System.out.println("current webpage: " + url);
-                        System.out.println("size of list: " + urlList.size());
-                        System.out.println();
-                        //
-                        getAllATags("https://improving.com" + linkValue, urlList);
+            //only improving urls W/O "#" that are NOT in the list already
+            if (fullUrl.startsWith("https://improving.com") && !fullUrl.contains("#") && !urlList.contains(fullUrl)) {
+                try {
+                    urlList.add(fullUrl);
+                    System.out.println("unique link found: " + fullUrl);
+                    System.out.println("current webpage: " + url);
+                    System.out.println();
+                    //
+                    getAllATags(fullUrl);
 
 
-                    } catch (UnsupportedMimeTypeException pdfException) {
-                        System.out.println("pdf found");
-                        urlList.add(linkValue);
-                    } catch (HttpStatusException e){ //im not getting any of these...
-                        System.out.println("404 error");
-                        urlList.add(linkValue);
-                    }
+                } catch (UnsupportedMimeTypeException pdfException) {
+                    System.out.println("pdf found");
+                    System.out.println();
+                    urlList.add(fullUrl);
+
+                } catch (HttpStatusException e) {
+                    System.out.println("404 error");
+                    System.out.println();
+                    fourHundredFourCount++;
                 }
             }
-//        }
+
+        }
         System.out.println("Num of Unique Links: " + urlList.size());
+        System.out.println("Num of 404 errors:" + fourHundredFourCount);
     }
 }
 
